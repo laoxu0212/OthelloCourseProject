@@ -25,7 +25,7 @@ typedef struct
 } Change;
 Change changes[100]; //to save the change during searching
 
-void Place(int f, int x, int y)
+void Place(int f, int x, int y) //f is the color, x,y is the location
 {
 	G[x][y] = f;
 	cur_val += f;
@@ -36,6 +36,30 @@ void Place(int f, int x, int y)
 		nx = x + dx[i] + dx[i]
 		ny = y + dy[i] + dy[i]
 		if(nx>=0 && nx<8 && ny>=0 && ny<8)
+		{
+			if(G[nx][ny] == f && G[x + dx[i]][y + dy[i]] == -f)//a reverse should be applied
+			{
+				G[x+dx[i]][y+dy[i]] = f;
+				cur_val += f + f;
+			}
+		}
 	}
+}
 
+bool Try(int f, int x, int y) //to chanek if G[x][y] can put a piece.
+{
+	int nx, ny;
+	for(int i = 0;i < 8;i++)
+	{
+		nx = x + dx[i] + dx[i]
+		ny = y + dy[i] + dy[i]
+		if(nx>=0 && nx<8 && ny>=0 && ny<8)
+		{
+			if(G[nx][ny] == f && G[x + dx[i]][y + dy[i]] == -f)//a reverse should be applied
+			{
+				return true
+			}
+		}
+	}
+	return false
 }
