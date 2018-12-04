@@ -18,7 +18,7 @@ int ch_iter;
 double INF = (1.0/0.0);
 int field;
 int cur_val;
-int cur_move;//当前步数
+int cur_move;//current count of moves.
 int dx[8] = {-1,-1,-1,0,0,1,1,1}, dy[8] = {-1,0,1,-1,1,-1,0,1};
 /*
  0 3 5
@@ -38,15 +38,16 @@ int w[8][8]={
     {2727,-1005,1612,-1285,-2016,1093,-1080,3373},
     {-6510,-5289,-1079,-2294,-1111,-1347,-5426,-6785},
     {28298,-6254,2458,1728,1172,3260,-6776,27948}};
+//The weight of each position, please check the other file that generates the weight.
 typedef struct
 {
     int x, y;
 } Loc;
 typedef struct
 {
-    int x, y, fro;
+    int x, y, from;
 } Change;
-Change changes[2048];//暂存搜索中的修改
+Change changes[2048];//a vertor that saves the change during searching temporally.
 #define eps (1e-7)
 #define maxdep 255
 Loc BestMove[64];
@@ -80,15 +81,8 @@ void show() {
     printf("%s", "--------------------\n");
     fflush(stdout);
 }
-int min(int a, int b)
-{
-    return a < b?  a : b;
-}
-int max(int a, int b)
-{
-    return a > b ? a : b;
-}
 
+//Place a piece, then adjust the color.
 void Place(int f, int x, int y)
 {
     G[x][y] = f;
@@ -102,7 +96,7 @@ void Place(int f, int x, int y)
             nx += dx[i];
             ny += dy[i];
         }
-        if(in_board(nx, ny) && G[nx][ny] == f && (nx != x+dx[i] || ny != y+dy[i]))//可以翻转
+        if(in_board(nx, ny) && G[nx][ny] == f && (nx != x+dx[i] || ny != y+dy[i]))//it can be changed
         {
             nx -= dx[i];
             ny -= dy[i];
@@ -141,7 +135,8 @@ int Try(int f, int x, int y, int change)//求G[x][y]是否可落f方的棋子。
                 if(change == 1)
                 {
                     G[nx][ny] = f;
-                    changes[ch_iter++] = (Change){nx, ny, -f};
+                    changes[ch_iter] = (Change){nx, ny, -f};
+                    ch_iter++;
                 }
                 else break;
                 nx -= dx[i];
@@ -154,14 +149,15 @@ int Try(int f, int x, int y, int change)//求G[x][y]是否可落f方的棋子。
         if(change == 1)
         {
             G[x][y] = f;
-            changes[ch_iter++] = (Change){x, y, 0};
+            changes[ch_iter] = (Change){x, y, 0};
+            ch_iter++;
         }
         return 1;
     }
     else
         return 0;
 }
-
+//input a string of vector, then change it to a board.
 int load_board(char inputstr[]){
     int i = 0, j = -1;
     int empty = 0;
@@ -210,16 +206,16 @@ double getVal()
     
     if(cur_move + 2 >= 64)
     {
-        for(int i = 0;i < 8;++i)
-            for(int j = 0;j < 8;++j)
+        for(int i = 0;i < 8;i++)
+            for(int j = 0;j < 8;j++)
                 if(G[i][j] != 0)
                 {
-                    ++cnt;
+                    cnt++;
                     rCount += G[i][j];
                 }
         return rCount / cnt;
     }
-    for(int i = 0;i < 4;++i)
+    for(int i = 0;i < 4;i++)
     {
         if(G[order[i].x][order[i].y] == 1)
             cor1++;
@@ -227,11 +223,11 @@ double getVal()
             if(G[order[i].x][order[i].y] == -1)
                 cor2++;
     }
-    for(int i = 0;i < 8;++i)
-        for(int j = 0;j < 8;++j)
+    for(int i = 0;i < 8;i++)
+        for(int j = 0;j < 8;j++)
             if(G[i][j] != 0)
             {
-                ++cnt;
+                cnt++;
                 rCount += G[i][j];
                 rWeight += G[i][j] * w[i][j];
             }
@@ -259,11 +255,13 @@ double getVal()
     rpMobility = pmob1 + pmob2 == 0 ? 0 : (pmob1 - pmob2 + 0.0) / (pmob1 + pmob2);
     rCorner = cor1 + cor2 == 0 ? 0 : (cor1 - cor2 + 0.0) / (cor1 + cor2);
     
-    if(cur_move <= 4) return rCount * 30 + rWeight + rMobility * 20 + rpMobility * 20;
-    else if(cur_move <= 128)
-        return rCount * 50 + rWeight * 10 + (rMobility + rpMobility) * 10 + rCorner * 200;
-    else
-        return rCount * 50 + rWeight * 10 + rCorner * 300;
+    if(cur_move <= 4)
+        return rCount * 30 + rWeight + rMobility * 20 + rpMobility * 20;
+            else
+                if(cur_move <= 128)
+                    return rCount * 50 + rWeight * 10 + (rMobility + rpMobility) * 10 + rCorner * 200;
+                else
+                    return rCount * 50 + rWeight * 10 + rCorner * 300;
 }
 
 double search(int f, double a, double b, int dep, int totdep)
@@ -294,20 +292,21 @@ double search(int f, double a, double b, int dep, int totdep)
             if(t==0)
                 continue;
             if(Times > 0)
+//iterative search;
                 tmp = -search(-f, -b, -a, dep+1, totdep);
             else
                 tmp = a;
             while(ch_iter > iter)
             {
                 ch_iter--;
-                G[changes[ch_iter].x][changes[ch_iter].y] = changes[ch_iter].fro;
+                G[changes[ch_iter].x][changes[ch_iter].y] = changes[ch_iter].from;
             }
             if(Times <= 0)
                 return a;
             if(tmp > a+eps)
             {
                 if(tmp > b)
-                    break;//对方不会选择这条分支
+                    break;//对方不会选择这条分支，剪枝
                 res = order[i];
                 a = tmp;
                 BestMoveCount[dep] = i;
@@ -391,14 +390,16 @@ int main(){
     int x = 0,y = 0, result = 0;
 //here we difine balck goes first. Since we let A.I go first, we should know which color should A.I take.
 //If there are even empties, that means black go, else, white go.
-    cur_move = 0;
+//    cur_move = 0;
+    cur_move = 64 - empty;
     int it = 0;
-    for(x = 0;x < 8;++x)
-        for(y = 0;y < 8;++y)
+    for(x = 0;x < 8;x++)
+        for(y = 0;y < 8;y++)
         {
             order[it] = (Loc) {x, y};
             it++;
         }
+    qsort(order, 64, sizeof(Loc), cmp);
     show();
     
     printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
@@ -408,35 +409,35 @@ int main(){
     show();
     
     while(1) {
-        /* If you want A.I to play with itself, keet the mark below */
-        printf("%s %c %s", "Please input your location of", color(field),"\n");
-        Suggest();
-        scanf("%d,%d", &x, &y);
-        if(!Try(field, x, y, 0)||G[x][y]!=0)
-        {
-            printf("%s\n", "Not legal input.");
-            continue;
-        }
-        Place(field, x, y);
-        field*=-1;
-        show();
-
-        result = test_result();
-        if(result==0)
-            continue;
-        else
-            if(result==1)
-            {
-                printf("%s\n", "B wins.");
-                break;
-            }
-            else
-                if(result==-1)
-                {
-                    printf("%s\n", "W wins.");
-                    break;
-                }
-        /* If you want to play with A.I, Urmark above */
+        /* If you want A.I to play with itself, keep the mark below */
+//        printf("%s %c %s", "Please input your location of", color(field),"\n");
+//        Suggest();
+//        scanf("%d,%d", &x, &y);
+//        if(!Try(field, x, y, 0)||G[x][y]!=0)
+//        {
+//            printf("%s\n", "Not legal input.");
+//            continue;
+//        }
+//        Place(field, x, y);
+//        field*=-1;
+//        show();
+//
+//        result = test_result();
+//        if(result==0)
+//            continue;
+//        else
+//            if(result==1)
+//            {
+//                printf("%s\n", "B wins.");
+//                break;
+//            }
+//            else
+//                if(result==-1)
+//                {
+//                    printf("%s\n", "W wins.");
+//                    break;
+//                }
+        /* If you want to play with A.I, Unmark above */
         printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
         Put();
         field*=-1;
