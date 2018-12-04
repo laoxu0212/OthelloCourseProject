@@ -333,8 +333,12 @@ void Put()
         search(field, -INF, INF, 0, i);
         if(Times == 0) break;
     }
+    int k = 0;
     Loc tmp = BestMove[0];
-    
+    while(Try(field, tmp.x, tmp.y, 0)==0) {
+        k++;
+        tmp = BestMove[k];
+    }
     printf("%d,%d\n",tmp.x,tmp.y);
     Place(field, tmp.x, tmp.y);
 }
