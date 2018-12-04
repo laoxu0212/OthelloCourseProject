@@ -118,8 +118,8 @@ void Place(int f, int x, int y)
 
 int Try(int f, int x, int y, int change)//求G[x][y]是否可落f方的棋子。change=1时将改动暂存为changes数组.
 {
-    if(G[x][y]!=0)
-        return 0;
+//    if(G[x][y]!=0)
+//        return 0;
     int nx, ny;
     int ok = 0;
     for(int i = 0;i < 8;++i)
@@ -355,7 +355,7 @@ void Suggest()
         if(Times == 0) break;
     }
     Loc tmp = BestMove[0];
-    printf("Suggestion: %d,%d\n",tmp.x,tmp.y);
+    printf("---Suggestion: %d,%d\n",tmp.x,tmp.y);
 }
 
 int cmp(const void *a, const void *b)
@@ -401,41 +401,42 @@ int main(){
         }
     show();
     
-    printf("%s %c %s", "Now the A.I shall put", color(field),"at\n");
+    printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
     fflush(stdout);
     Put();
     field*=-1;
     show();
     
     while(1) {
-//        printf("%s %c %s", "Please input your location of", color(field),"\n");
-//        Suggest();
-//        scanf("%d,%d", &x, &y);
-//        if(!Try(field, x, y, 0))
-//        {
-//            printf("%s\n", "Not legal input.");
-//            continue;
-//        }
-//        Place(field, x, y);
-//        field*=-1;
-//        show();
-//
-//        result = test_result();
-//        if(result==0)
-//            continue;
-//        else
-//            if(result==1)
-//            {
-//                printf("%s\n", "B wins.");
-//                break;
-//            }
-//            else
-//                if(result==-1)
-//                {
-//                    printf("%s\n", "W wins.");
-//                    break;
-//                }
-        
+        /* If you want A.I to play with itself, keet the mark below */
+        printf("%s %c %s", "Please input your location of", color(field),"\n");
+        Suggest();
+        scanf("%d,%d", &x, &y);
+        if(!Try(field, x, y, 0)||G[x][y]!=0)
+        {
+            printf("%s\n", "Not legal input.");
+            continue;
+        }
+        Place(field, x, y);
+        field*=-1;
+        show();
+
+        result = test_result();
+        if(result==0)
+            continue;
+        else
+            if(result==1)
+            {
+                printf("%s\n", "B wins.");
+                break;
+            }
+            else
+                if(result==-1)
+                {
+                    printf("%s\n", "W wins.");
+                    break;
+                }
+        /* If you want to play with A.I, Urmark above */
         printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
         Put();
         field*=-1;
