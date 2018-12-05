@@ -37,7 +37,7 @@ int w[8][8]={
     {132561,-184466,-151508,0,0,-152339,-180922,134657},
     {291285,-96017,123918,-146790,-150518,130071,-103314,296055},
     {-640795,-534037,-103774,-182132,-188671,-105241,-536888,-638507},
-    {2794063,-636160,297153,132418,134495,295275,-639591,2792289}}
+    {2794063,-636160,297153,132418,134495,295275,-639591,2792289}};
 //The weight of each position, please check the other file that generates the weight.
 typedef struct
 {
@@ -112,8 +112,8 @@ void Place(int f, int x, int y)
 
 int Try(int f, int x, int y, int change)//求G[x][y]是否可落f方的棋子。change=1时将改动暂存为changes数组.
 {
-//    if(G[x][y]!=0)
-//        return 0;
+    //    if(G[x][y]!=0)
+    //        return 0;
     int nx, ny;
     int ok = 0;
     for(int i = 0;i < 8;++i)
@@ -258,11 +258,11 @@ double getVal()
     
     if(cur_move <= 4)
         return rCount * 30 + rWeight + rMobility * 20 + rpMobility * 20;
-            else
-                if(cur_move <= 32)
-                    return rCount * 50 + rWeight * 10 + (rMobility + rpMobility) * 10 + rCorner * 200;
-                else
-                    return rCount * 50 + rWeight * 10 + rCorner * 300;
+    else
+        if(cur_move <= 32)
+            return rCount * 50 + rWeight * 10 + (rMobility + rpMobility) * 10 + rCorner * 200;
+        else
+            return rCount * 50 + rWeight * 10 + rCorner * 300;
 }
 
 double search(int f, double a, double b, int dep, int totdep)
@@ -293,7 +293,7 @@ double search(int f, double a, double b, int dep, int totdep)
             if(t==0)
                 continue;
             if(Times > 0)
-//iterative search;
+                //iterative search;
                 tmp = -search(-f, -b, -a, dep+1, totdep);
             else
                 tmp = a;
@@ -324,7 +324,7 @@ double search(int f, double a, double b, int dep, int totdep)
 
 void Put()
 {
-//    int x, y;
+    //    int x, y;
     ch_iter = 0;
     int i;
     Times = 6000;
@@ -335,7 +335,7 @@ void Put()
     }
     int k = 0;
     Loc tmp = BestMove[0];
-    while(Try(field, tmp.x, tmp.y, 0)==0) {
+    while(Try(field, tmp.x, tmp.y, 0)==0||G[tmp.x][tmp.y]!=0) {
         k++;
         tmp = BestMove[k];
     }
@@ -381,7 +381,7 @@ int test_result(){
 }
 
 int main(){
-//    char order[64];
+    //    char order[64];
     char inputstr[255];
     printf("%s", "Welcome to try our little A.I.\n");
     printf("%s", "Now please input the board.\n");
@@ -389,9 +389,9 @@ int main(){
     int empty = load_board(inputstr);
     field = -(empty%2)*2+1;
     int x = 0,y = 0, result = 0;
-//here we difine balck goes first. Since we let A.I go first, we should know which color should A.I take.
-//If there are even empties, that means black go, else, white go.
-//    cur_move = 0;
+    //here we difine balck goes first. Since we let A.I go first, we should know which color should A.I take.
+    //If there are even empties, that means black go, else, white go.
+    //    cur_move = 0;
     cur_move = 64 - empty;
     int it = 0;
     for(x = 0;x < 8;x++)
@@ -411,33 +411,33 @@ int main(){
     
     while(1) {
         /* If you want A.I to play with itself, keep the mark below */
-//        printf("%s %c %s", "Please input your location of", color(field),"\n");
-//        Suggest();
-//        scanf("%d,%d", &x, &y);
-//        if(!Try(field, x, y, 0)||G[x][y]!=0)
-//        {
-//            printf("%s\n", "Not legal input.");
-//            continue;
-//        }
-//        Place(field, x, y);
-//        field*=-1;
-//        show();
-//
-//        result = test_result();
-//        if(result==0)
-//            continue;
-//        else
-//            if(result==1)
-//            {
-//                printf("%s\n", "B wins.");
-//                break;
-//            }
-//            else
-//                if(result==-1)
-//                {
-//                    printf("%s\n", "W wins.");
-//                    break;
-//                }
+        //        printf("%s %c %s", "Please input your location of", color(field),"\n");
+        //        Suggest();
+        //        scanf("%d,%d", &x, &y);
+        //        if(!Try(field, x, y, 0)||G[x][y]!=0)
+        //        {
+        //            printf("%s\n", "Not legal input.");
+        //            continue;
+        //        }
+        //        Place(field, x, y);
+        //        field*=-1;
+        //        show();
+        //
+        //        result = test_result();
+        //        if(result==0)
+        //            continue;
+        //        else
+        //            if(result==1)
+        //            {
+        //                printf("%s\n", "B wins.");
+        //                break;
+        //            }
+        //            else
+        //                if(result==-1)
+        //                {
+        //                    printf("%s\n", "W wins.");
+        //                    break;
+        //                }
         /* If you want to play with A.I, Unmark above */
         printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
         Put();
