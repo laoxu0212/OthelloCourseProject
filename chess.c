@@ -409,7 +409,8 @@ int main(){
     field*=-1;
     show();
     
-    while(1) {
+    while(1)
+    {
         /* If you want A.I to play with itself, keep the mark below */
         //        printf("%s %c %s", "Please input your location of", color(field),"\n");
         //        Suggest();
@@ -445,22 +446,19 @@ int main(){
         show();
         
         result = test_result();
-        if(result==0)
-            continue;
+        if(result==1)
+        {
+            printf("%s\n", "B wins.");
+            fflush(stdout);
+            break;
+        }
         else
-            if(result==1)
+            if(result==-1)
             {
-                printf("%s\n", "B wins.");
+                printf("%s\n", "W wins.");
                 fflush(stdout);
                 break;
             }
-            else
-                if(result==-1)
-                {
-                    printf("%s\n", "W wins.");
-                    fflush(stdout);
-                    break;
-                }
     }
     return 0;
 }
