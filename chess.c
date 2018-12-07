@@ -257,7 +257,7 @@ double getVal()
     rCorner = cor1 + cor2 == 0 ? 0 : (cor1 - cor2 + 0.0) / (cor1 + cor2);
     
     if(cur_move <= 4)
-        return rCount * 30 + rWeight + rMobility * 20 + rpMobility * 20;
+        return rCount * 30 + rWeight + rMobility * 10 + rpMobility * 10;
     else
         if(cur_move <= 32)
             return rCount * 50 + rWeight * 10 + (rMobility + rpMobility) * 10 + rCorner * 200;
@@ -392,7 +392,7 @@ int main(){
     //here we difine balck goes first. Since we let A.I go first, we should know which color should A.I take.
     //If there are even empties, that means black go, else, white go.
     //    cur_move = 0;
-    cur_move = 64 - empty;
+    cur_move = 62 - empty;
     int it = 0;
     for(x = 0;x < 8;x++)
         for(y = 0;y < 8;y++)
@@ -412,53 +412,57 @@ int main(){
     while(1)
     {
         /* If you want A.I to play with itself, keep the mark below */
-        //        printf("%s %c %s", "Please input your location of", color(field),"\n");
-        //        Suggest();
-        //        scanf("%d,%d", &x, &y);
-        //        if(!Try(field, x, y, 0)||G[x][y]!=0)
-        //        {
-        //            printf("%s\n", "Not legal input.");
-        //            continue;
-        //        }
-        //        Place(field, x, y);
-        //        field*=-1;
-        //        show();
-        //
-        //        result = test_result();
-        //        if(result==0)
-        //            continue;
-        //        else
-        //            if(result==1)
-        //            {
-        //                printf("%s\n", "B wins.");
-        //                break;
-        //            }
-        //            else
-        //                if(result==-1)
-        //                {
-        //                    printf("%s\n", "W wins.");
-        //                    break;
-        //                }
-        /* If you want to play with A.I, Unmark above */
-        printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
-        Put();
+        printf("%s %c %s", "Please input your location of", color(field),"\n");
+        Suggest();
+        scanf("%d,%d", &x, &y);
+        if(!Try(field, x, y, 0)||G[x][y]!=0)
+        {
+            printf("%s\n", "Not legal input.");
+            continue;
+        }
+        Place(field, x, y);
         field*=-1;
         show();
         
         result = test_result();
+        //        if(result==0)
+        //            continue;
+        //        else
         if(result==1)
         {
             printf("%s\n", "B wins.");
-            fflush(stdout);
             break;
         }
         else
             if(result==-1)
             {
                 printf("%s\n", "W wins.");
+                break;
+            }
+        /* If you want to play with A.I, Unmark above */
+        
+        printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
+        Put();
+        field*=-1;
+        show();
+        
+        result = test_result();
+        if(result==0)
+            continue;
+        else
+            if(result==1)
+            {
+                printf("%s\n", "B wins.");
                 fflush(stdout);
                 break;
             }
+            else
+                if(result==-1)
+                {
+                    printf("%s\n", "W wins.");
+                    fflush(stdout);
+                    break;
+                }
     }
     return 0;
 }
