@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 // chessboard
 int G[8][8];
 //last change's number
@@ -391,7 +392,6 @@ int main(){
     int x = 0,y = 0, result = 0;
     //here we difine balck goes first. Since we let A.I go first, we should know which color should A.I take.
     //If there are even empties, that means black go, else, white go.
-    //    cur_move = 0;
     cur_move = 62 - empty;
     int it = 0;
     for(x = 0;x < 8;x++)
@@ -408,7 +408,7 @@ int main(){
     Put();
     field*=-1;
     show();
-    
+    long totoal_ai_time = 0;
     while(1)
     {
         /* If you want A.I to play with itself, keep the mark below */
@@ -425,9 +425,6 @@ int main(){
         show();
         
         result = test_result();
-        //        if(result==0)
-        //            continue;
-        //        else
         if(result==1)
         {
             printf("%s\n", "B wins.");
@@ -440,12 +437,13 @@ int main(){
                 break;
             }
         /* If you want to play with A.I, Unmark above */
-        
+        long begin_time = clock();
         printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
         Put();
+        long end_time = clock();
         field*=-1;
         show();
-        
+        totoal_ai_time += (end_time - begin_time);
         result = test_result();
         if(result==0)
             continue;
@@ -464,6 +462,7 @@ int main(){
                     break;
                 }
     }
+    printf("%s : %ld ms \n", "Total time usage:", totoal_ai_time/(CLOCKS_PER_SEC/1000));
     return 0;
 }
 
