@@ -1,0 +1,7 @@
+OPPONENT:
+https://othello-reversi.com/
+
+RESULTS:
+EASY:   16/20
+MEDIUM: 14/20
+HARD: 6/20

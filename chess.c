@@ -378,7 +378,11 @@ int test_result(){
     if(sum>0)
         return 1;
     else
-        return -1;
+        if (sum<0){
+            return -1;
+        }
+        else
+            return -2;
 }
 
 int main(){
@@ -436,6 +440,12 @@ int main(){
                 printf("%s\n", "W wins.");
                 break;
             }
+            else
+                if(result==-2)
+                {
+                    printf("%s\n", "Draw.");
+                    break;
+                }
         /* If you want to play with A.I, Unmark above */
         long begin_time = clock();
         printf("%s %c %s", "Now the A.I shall put", color(field),"at ");
@@ -451,16 +461,20 @@ int main(){
             if(result==1)
             {
                 printf("%s\n", "B wins.");
-                fflush(stdout);
                 break;
             }
             else
                 if(result==-1)
                 {
                     printf("%s\n", "W wins.");
-                    fflush(stdout);
                     break;
                 }
+                else
+                    if(result==-2)
+                    {
+                        printf("%s\n", "Draw.");
+                        break;
+                    }
     }
     printf("%s : %ld ms \n", "Total time usage:", totoal_ai_time/(CLOCKS_PER_SEC/1000));
     return 0;
